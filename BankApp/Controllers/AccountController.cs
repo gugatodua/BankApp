@@ -78,8 +78,8 @@ namespace BankApp.Controllers
         [HttpPut("Convert")]
         public IActionResult Convert(string accountFrom, string accountTo, decimal amount)
         {
-            Account credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            Account debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
+            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
+            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
 
             if (credit.Balance < amount)
             {
@@ -115,8 +115,8 @@ namespace BankApp.Controllers
         [HttpPost("DepositMoney")]
         public IActionResult DepositMoney(decimal amount, string iban, string currency)
         {
-            Account account = _dbContext.Accounts.Where(x => x.Iban == iban).FirstOrDefault();
-            BankWallet bankWallet = _dbContext.BankWallets.Where(x => x.Currency == currency).FirstOrDefault();
+            var account = _dbContext.Accounts.Where(x => x.Iban == iban).FirstOrDefault();
+            var bankWallet = _dbContext.BankWallets.Where(x => x.Currency == currency).FirstOrDefault();
 
             account.Balance += amount;
             bankWallet.Amount += amount;
