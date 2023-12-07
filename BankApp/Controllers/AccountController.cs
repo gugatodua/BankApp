@@ -86,26 +86,29 @@ namespace BankApp.Controllers
                 return BadRequest();
             }
 
-            if(credit.Currency == "GEL" && debit.Currency == "GEL") 
+            switch (credit.Currency)
             {
-                credit.Balance -= amount;
-                debit.Balance += amount;
-            } 
-            else if(credit.Currency == "USD" && debit.Currency == "USD")
-            {
-                credit.Balance -= amount;
-                debit.Balance += amount;
+                case "GEL" when debit.Currency == "GEL":
+                    credit.Balance -= amount;
+                    debit.Balance += amount;
+                    break;
+                case "USD" when debit.Currency == "USD":
+                    credit.Balance -= amount;
+                    debit.Balance += amount;
+                    break;
+                case "GEL" when debit.Currency == "USD":
+                    credit.Balance -= amount;
+                    debit.Balance += amount / 3;
+                    break;
+                case "USD" when debit.Currency == "GEL":
+                    credit.Balance -= amount;
+                    debit.Balance += amount * 3;
+                    break;
+                default:
+
+                    break;
             }
-            else if( credit.Currency == "GEL" &&  debit.Currency == "USD")
-            {
-                credit.Balance -= amount;
-                debit.Balance += amount / 3;
-            }
-            else if(credit.Currency == "USD" && debit.Currency == "GEL" )
-            {
-                credit.Balance -= amount;
-                debit.Balance += amount * 3;
-            }
+
 
             _dbContext.SaveChanges();
 
