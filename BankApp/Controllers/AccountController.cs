@@ -109,7 +109,6 @@ namespace BankApp.Controllers
                     break;
             }
 
-
             _dbContext.SaveChanges();
 
             return Ok();

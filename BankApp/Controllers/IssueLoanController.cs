@@ -5,11 +5,11 @@ namespace BankApp.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class IssueLoanController : ControllerBase
+    public class LoanController : ControllerBase
     {
         private readonly BankDbContext _dbContext;
 
-        public IssueLoanController(BankDbContext dbContext)
+        public LoanController(BankDbContext dbContext)
         {
             _dbContext = dbContext;
         }
@@ -28,6 +28,8 @@ namespace BankApp.Controllers
                 UserId = userId
             };
 
+            var account = _dbContext.Accounts.Where(x => x.UserId == userId).FirstOrDefault();
+            account.Balance += amount;
             _dbContext.Add(loan);
             _dbContext.SaveChanges();
 
