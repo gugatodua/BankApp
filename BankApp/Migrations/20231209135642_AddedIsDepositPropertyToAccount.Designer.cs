@@ -4,6 +4,7 @@ using BankApp.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankApp.Migrations
 {
     [DbContext(typeof(BankDbContext))]
-    partial class BankDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231209135642_AddedIsDepositPropertyToAccount")]
+    partial class AddedIsDepositPropertyToAccount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -45,9 +47,6 @@ namespace BankApp.Migrations
                     b.Property<string>("UserId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime?>("WithdrawDate")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -102,18 +101,11 @@ namespace BankApp.Migrations
                     b.Property<decimal>("Amount")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("Currency")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("PaymentDay")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("PaymentDay")
+                        .HasColumnType("datetime2");
 
                     b.Property<decimal>("Rate")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("TimeLImit")
-                        .HasColumnType("int");
 
                     b.Property<string>("UserId")
                         .IsRequired()
