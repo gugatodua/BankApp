@@ -126,7 +126,7 @@ namespace BankApp.Controllers
             return Ok();    
         }
 
-        [HttpPost]
+        [HttpPost("AddDeposit")]
         public IActionResult AddDeposit([FromBody] DepositDto depositDto)
         {
             var user = _dbContext.Users
