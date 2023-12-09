@@ -133,21 +133,22 @@ namespace BankApp.Controllers
                 .Where(x => x.Id == depositDto.UserId)
                 .FirstOrDefault();
 
-            var deposit = new Deposit
+
+            var account = new Account
             {
                 Id = Guid.NewGuid(),
                 Balance = 0,
                 Iban = depositDto.Iban,
                 User = user,
                 Currency = depositDto.Currency,
-                TakingDay = depositDto.TakingDay 
+                IsDeposit = depositDto.IsDeposit,
+                WithdrawDate = depositDto.WithdrawDate
             };
 
-            _dbContext.Add(deposit);
+            _dbContext.Add(account);
             _dbContext.SaveChanges();
 
             return Ok();
-        }
+        } 
     }
 }
-

@@ -2,6 +2,7 @@
 {
     public class DepositDto : AccountDto
     {
-       public int TakingDay { get; set; } 
+        public DateTime? WithdrawDate { get; set; }
+        public bool IsDeposit { get; set; }
     }
 }
