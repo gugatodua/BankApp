@@ -124,6 +124,30 @@ namespace BankApp.Controllers
             _dbContext.SaveChanges();
 
             return Ok();    
-        } 
+        }
+
+        [HttpPost]
+        public IActionResult AddDeposit([FromBody] DepositDto depositDto)
+        {
+            var user = _dbContext.Users
+                .Where(x => x.Id == depositDto.UserId)
+                .FirstOrDefault();
+
+            var deposit = new Deposit
+            {
+                Id = Guid.NewGuid(),
+                Balance = 0,
+                Iban = depositDto.Iban,
+                User = user,
+                Currency = depositDto.Currency,
+                TakingDay = depositDto.TakingDay 
+            };
+
+            _dbContext.Add(deposit);
+            _dbContext.SaveChanges();
+
+            return Ok();
+        }
     }
 }
+
