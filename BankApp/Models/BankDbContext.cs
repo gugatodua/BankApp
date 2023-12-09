@@ -18,8 +18,6 @@ namespace BankApp.Models
         public DbSet<Role> Roles { get; set; }
         public DbSet<User> Users { get; set; }  
         public DbSet<BankWallet> BankWallets { get; set;}
-        public DbSet<Deposit> Deposits { get; set; }
-
 
     }
 

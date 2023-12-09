@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BankApp.Migrations
 {
     [DbContext(typeof(BankDbContext))]
-    [Migration("20231209131806_addeddeposit")]
-    partial class addeddeposit
+    [Migration("20231209135642_AddedIsDepositPropertyToAccount")]
+    partial class AddedIsDepositPropertyToAccount
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,13 +37,12 @@ namespace BankApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Discriminator")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Iban")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeposit")
+                        .HasColumnType("bit");
 
                     b.Property<string>("UserId")
                         .IsRequired()
@@ -54,8 +53,6 @@ namespace BankApp.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Accounts");
-
-                    b.HasDiscriminator<string>("Discriminator").HasValue("Account");
                 });
 
             modelBuilder.Entity("BankApp.Models.BankWallet", b =>
@@ -353,16 +350,6 @@ namespace BankApp.Migrations
                     b.HasKey("UserId", "LoginProvider", "Name");
 
                     b.ToTable("AspNetUserTokens", (string)null);
-                });
-
-            modelBuilder.Entity("BankApp.Models.Deposit", b =>
-                {
-                    b.HasBaseType("BankApp.Models.Account");
-
-                    b.Property<int>("TakingDay")
-                        .HasColumnType("int");
-
-                    b.HasDiscriminator().HasValue("Deposit");
                 });
 
             modelBuilder.Entity("BankApp.Models.Account", b =>
