@@ -17,21 +17,10 @@ namespace BankApp.Controllers
         [HttpPost]
         public IActionResult AddAccount([FromBody] AccountDto accountDto)
         {
-            var user = _dbContext.Users
-                .Where(x => x.Id == accountDto.UserId)
-                .FirstOrDefault();
-
-            var account = new Account
-            {
-                Id = Guid.NewGuid(),
-                Balance = 0,
-                Iban = accountDto.Iban,
-                User = user,
-                Currency = accountDto.Currency
-            };
-
-            _dbContext.Add(account);
-            _dbContext.SaveChanges();
+            AddAccountRecord(
+             accountDto.UserId,
+             accountDto.Iban,
+             accountDto.Currency);
 
             return Ok();
         }
@@ -129,26 +118,40 @@ namespace BankApp.Controllers
         [HttpPost("AddDeposit")]
         public IActionResult AddDeposit([FromBody] DepositDto depositDto)
         {
-            var user = _dbContext.Users
-                .Where(x => x.Id == depositDto.UserId)
-                .FirstOrDefault();
+            AddAccountRecord(
+                depositDto.UserId, 
+                depositDto.Iban, 
+                depositDto.Currency, 
+                depositDto.IsDeposit, 
+                depositDto.WithdrawDate);
 
+            return Ok();
+        } 
+
+        private void AddAccountRecord(
+            string userId, 
+            string iban,
+            string currency,
+            bool isDeposit = false,
+            DateTime? withdrawDate = null)
+        {
+            var user = _dbContext.Users
+             .Where(x => x.Id == userId)
+             .FirstOrDefault();
 
             var account = new Account
             {
                 Id = Guid.NewGuid(),
                 Balance = 0,
-                Iban = depositDto.Iban,
+                Iban = iban,
                 User = user,
-                Currency = depositDto.Currency,
-                IsDeposit = depositDto.IsDeposit,
-                WithdrawDate = depositDto.WithdrawDate
+                Currency = currency,
+                IsDeposit = isDeposit,
+                WithdrawDate = withdrawDate
             };
 
             _dbContext.Add(account);
             _dbContext.SaveChanges();
-
-            return Ok();
-        } 
+        }
     }
 }
