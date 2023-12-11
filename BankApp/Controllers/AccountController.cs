@@ -167,16 +167,16 @@ namespace BankApp.Controllers
             {
                 return BadRequest();
             }
-
+            
             if (credit.UserId != debit.UserId)
             {
                 return BadRequest();
             }
-
+            
             if(credit.WithdrawDate != withdrawDate)
             {
-                return BadRequest();
-            }
+                return BadRequest("BLaBLaBLa");
+            } 
 
             credit.Balance -= amount;
             debit.Balance += amount;
