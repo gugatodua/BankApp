@@ -161,7 +161,6 @@ namespace BankApp.Controllers
         {
             Account credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
             Account debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-            DateTime withdrawDate = DateTime.Now;
 
             if (credit.Balance < amount)
             {
@@ -172,11 +171,6 @@ namespace BankApp.Controllers
             {
                 return BadRequest();
             }
-            
-            if(credit.WithdrawDate != withdrawDate)
-            {
-                return BadRequest("BLaBLaBLa");
-            } 
 
             credit.Balance -= amount;
             debit.Balance += amount;
