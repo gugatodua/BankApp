@@ -155,5 +155,30 @@ namespace BankApp.Controllers
             _dbContext.Add(account);
             _dbContext.SaveChanges();
         }
+
+        [HttpPut("DepositToAccount")]
+        public IActionResult DepositToAccount(string accountFrom, string accountTo, decimal amount)
+        {
+            Account credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
+            Account debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
+
+            if (credit.Balance < amount)
+            {
+                return BadRequest();
+            }
+            
+            if (credit.UserId != debit.UserId)
+            {
+                return BadRequest();
+            }
+
+            credit.Balance -= amount;
+            debit.Balance += amount;
+
+            _dbContext.SaveChanges();
+
+            return Ok();
+        }
+
     }
 }
