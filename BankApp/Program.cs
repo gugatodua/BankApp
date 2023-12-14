@@ -1,3 +1,5 @@
+using BankApp.Api;
+using BankApp.Domain;
 using BankApp.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -24,6 +26,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddRoles<Role>()
     .AddEntityFrameworkStores<BankDbContext>();
+
+builder.Services.AddScoped<IMoneySender, MoneySender>();
 
 builder.Services.AddSwaggerGen(c =>
 {

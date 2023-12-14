@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using BankApp.Api;
 using BankApp.Dtos;
 using BankApp.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,11 @@ namespace BankApp.Controllers
     public class AccountController : ControllerBase
     {
         private readonly BankDbContext _dbContext;
-        public AccountController(BankDbContext dbContext)
+        private readonly MoneySender _moneySender;
+        public AccountController(BankDbContext dbContext, MoneySender moneySender)
         {
             _dbContext = dbContext;
+            _moneySender = moneySender;
         }
 
         [HttpPost]
@@ -29,13 +32,7 @@ namespace BankApp.Controllers
         [HttpPut("SendMoney")]
         public IActionResult SendMoney(string accountFrom, string accountTo, decimal amount)
         {
-            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            credit.Balance -= amount;
-            debit.Balance += amount;
-
-            _dbContext.SaveChanges();
+            _moneySender.SendMoney(accountFrom, accountTo, amount);
 
             return Ok();
         }
@@ -208,6 +205,5 @@ namespace BankApp.Controllers
 
             return Ok();
         }
-
     }
 }
