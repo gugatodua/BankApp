@@ -1,4 +1,5 @@
-﻿using BankApp.Dtos;
+﻿using System.Diagnostics;
+using BankApp.Dtos;
 using BankApp.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -154,6 +155,34 @@ namespace BankApp.Controllers
 
             _dbContext.Add(account);
             _dbContext.SaveChanges();
+        }
+
+        [HttpPut("WithdrawFromDepositAccount")]
+        public IActionResult WithdrawFromDepositAccount(string accountFrom, string accountTo, 
+                                                        decimal amount)
+
+        {
+            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();    
+            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
+
+            if (credit.Balance < amount)
+            {
+                return BadRequest();
+            }
+
+            if (credit.WithdrawDate.HasValue && (DateTime.Now - credit.WithdrawDate.Value).TotalDays > 365)
+            {
+                return BadRequest();
+            }
+
+
+            credit.Balance -= amount;
+            debit.Balance += amount;
+
+            _dbContext.SaveChanges();
+
+            return Ok();
+
         }
 
         [HttpPut("DepositToAccount")]
