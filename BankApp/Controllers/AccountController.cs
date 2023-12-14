@@ -164,17 +164,17 @@ namespace BankApp.Controllers
         {
             var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();    
             var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-            DateTime currentDate = DateTime.Now;
 
             if (credit.Balance < amount)
             {
                 return BadRequest();
             }
 
-            if (credit.WithdrawDate != currentDate)
+            if (credit.WithdrawDate.HasValue && (DateTime.Now - credit.WithdrawDate.Value).TotalDays > 365)
             {
-                return BadRequest("notnow");
+                return BadRequest();
             }
+
 
             credit.Balance -= amount;
             debit.Balance += amount;
