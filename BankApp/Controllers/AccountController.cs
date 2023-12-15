@@ -12,10 +12,12 @@ namespace BankApp.Controllers
     {
         private readonly BankDbContext _dbContext;
         private readonly MoneySender _moneySender;
-        public AccountController(BankDbContext dbContext, MoneySender moneySender)
+        private readonly Converter _converter;
+        public AccountController(BankDbContext dbContext, MoneySender moneySender, Converter converter)
         {
             _dbContext = dbContext;
             _moneySender = moneySender;
+            _converter = converter; 
         }
 
         [HttpPost]
@@ -49,38 +51,7 @@ namespace BankApp.Controllers
         [HttpPut("Convert")]
         public IActionResult Convert(string accountFrom, string accountTo, decimal amount)
         {
-            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            if (credit.Balance < amount)
-            {
-                return BadRequest();
-            }
-
-            switch (credit.Currency)
-            {
-                case "GEL" when debit.Currency == "GEL":
-                    credit.Balance -= amount;
-                    debit.Balance += amount;
-                    break;
-                case "USD" when debit.Currency == "USD":
-                    credit.Balance -= amount;
-                    debit.Balance += amount;
-                    break;
-                case "GEL" when debit.Currency == "USD":
-                    credit.Balance -= amount;
-                    debit.Balance += amount / 3;
-                    break;
-                case "USD" when debit.Currency == "GEL":
-                    credit.Balance -= amount;
-                    debit.Balance += amount * 3;
-                    break;
-                default:
-
-                    break;
-            }
-
-            _dbContext.SaveChanges();
+           _converter.Convert(accountFrom, accountTo, amount);
 
             return Ok();
         }
