@@ -12,10 +12,12 @@ namespace BankApp.Controllers
     {
         private readonly BankDbContext _dbContext;
         private readonly MoneySender _moneySender;
-        public AccountController(BankDbContext dbContext, MoneySender moneySender)
+        private readonly Converter _converter;
+        public AccountController(BankDbContext dbContext, MoneySender moneySender, Converter converter)
         {
             _dbContext = dbContext;
             _moneySender = moneySender;
+            _converter = converter; 
         }
 
         [HttpPost]
@@ -40,23 +42,7 @@ namespace BankApp.Controllers
         [HttpPut("SendMoneyInternal")]
         public IActionResult SendMoneyInternal(string accountFrom, string accountTo, decimal amount)
         {
-            Account credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            Account debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            if (credit.Balance < amount)
-            {
-                return BadRequest();
-            }
-
-            if (credit.UserId != debit.UserId)
-            {
-                return BadRequest();
-            }
-
-            credit.Balance -= amount;
-            debit.Balance += amount;
-
-            _dbContext.SaveChanges();
+            _moneySender.SendMoneyInternal(accountFrom, accountTo, amount);
 
             return Ok();
 
@@ -65,38 +51,7 @@ namespace BankApp.Controllers
         [HttpPut("Convert")]
         public IActionResult Convert(string accountFrom, string accountTo, decimal amount)
         {
-            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            if (credit.Balance < amount)
-            {
-                return BadRequest();
-            }
-
-            switch (credit.Currency)
-            {
-                case "GEL" when debit.Currency == "GEL":
-                    credit.Balance -= amount;
-                    debit.Balance += amount;
-                    break;
-                case "USD" when debit.Currency == "USD":
-                    credit.Balance -= amount;
-                    debit.Balance += amount;
-                    break;
-                case "GEL" when debit.Currency == "USD":
-                    credit.Balance -= amount;
-                    debit.Balance += amount / 3;
-                    break;
-                case "USD" when debit.Currency == "GEL":
-                    credit.Balance -= amount;
-                    debit.Balance += amount * 3;
-                    break;
-                default:
-
-                    break;
-            }
-
-            _dbContext.SaveChanges();
+           _converter.Convert(accountFrom, accountTo, amount);
 
             return Ok();
         }
@@ -104,13 +59,7 @@ namespace BankApp.Controllers
         [HttpPost("DepositMoney")]
         public IActionResult DepositMoney(decimal amount, string iban, string currency)
         {
-            var account = _dbContext.Accounts.Where(x => x.Iban == iban).FirstOrDefault();
-            var bankWallet = _dbContext.BankWallets.Where(x => x.Currency == currency).FirstOrDefault();
-
-            account.Balance += amount;
-            bankWallet.Amount += amount;
-
-            _dbContext.SaveChanges();
+           _moneySender.DepositMoney(amount, iban, currency);
 
             return Ok();    
         }
@@ -159,24 +108,7 @@ namespace BankApp.Controllers
                                                         decimal amount)
 
         {
-            var credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();    
-            var debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            if (credit.Balance < amount)
-            {
-                return BadRequest();
-            }
-
-            if (credit.WithdrawDate.HasValue && (DateTime.Now - credit.WithdrawDate.Value).TotalDays > 365)
-            {
-                return BadRequest();
-            }
-
-
-            credit.Balance -= amount;
-            debit.Balance += amount;
-
-            _dbContext.SaveChanges();
+           _moneySender.WithdrawFromDepositAccount(accountFrom, accountTo, amount);
 
             return Ok();
 
@@ -185,23 +117,7 @@ namespace BankApp.Controllers
         [HttpPut("DepositToAccount")]
         public IActionResult DepositToAccount(string accountFrom, string accountTo, decimal amount)
         {
-            Account credit = _dbContext.Accounts.Where(x => x.Iban == accountFrom).FirstOrDefault();
-            Account debit = _dbContext.Accounts.Where(x => x.Iban == accountTo).FirstOrDefault();
-
-            if (credit.Balance < amount)
-            {
-                return BadRequest();
-            }
-            
-            if (credit.UserId != debit.UserId)
-            {
-                return BadRequest();
-            }
-
-            credit.Balance -= amount;
-            debit.Balance += amount;
-
-            _dbContext.SaveChanges();
+            _moneySender.DepositToAccount(accountFrom, accountTo, amount);
 
             return Ok();
         }
