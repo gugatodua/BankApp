@@ -13,17 +13,19 @@ namespace BankApp.Controllers
         private readonly BankDbContext _dbContext;
         private readonly MoneySender _moneySender;
         private readonly Converter _converter;
-        public AccountController(BankDbContext dbContext, MoneySender moneySender, Converter converter)
+        private readonly AccountAndDepositAdder _accountAndDepositAdder;
+        public AccountController(BankDbContext dbContext, MoneySender moneySender, Converter converter, AccountAndDepositAdder accountAndDepositAdder)
         {
             _dbContext = dbContext;
             _moneySender = moneySender;
-            _converter = converter; 
+            _converter = converter;
+            _accountAndDepositAdder = accountAndDepositAdder;   
         }
 
         [HttpPost]
         public IActionResult AddAccount([FromBody] AccountDto accountDto)
         {
-            AddAccountRecord(
+            _accountAndDepositAdder.AddAccountRecord(
              accountDto.UserId,
              accountDto.Iban,
              accountDto.Currency);
@@ -67,7 +69,7 @@ namespace BankApp.Controllers
         [HttpPost("AddDeposit")]
         public IActionResult AddDeposit([FromBody] DepositDto depositDto)
         {
-            AddAccountRecord(
+            _accountAndDepositAdder.AddAccountRecord(
                 depositDto.UserId, 
                 depositDto.Iban, 
                 depositDto.Currency, 
@@ -76,32 +78,6 @@ namespace BankApp.Controllers
 
             return Ok();
         } 
-
-        private void AddAccountRecord(
-            string userId, 
-            string iban,
-            string currency,
-            bool isDeposit = false,
-            DateTime? withdrawDate = null)
-        {
-            var user = _dbContext.Users
-             .Where(x => x.Id == userId)
-             .FirstOrDefault();
-
-            var account = new Account
-            {
-                Id = Guid.NewGuid(),
-                Balance = 0,
-                Iban = iban,
-                User = user,
-                Currency = currency,
-                IsDeposit = isDeposit,
-                WithdrawDate = withdrawDate
-            };
-
-            _dbContext.Add(account);
-            _dbContext.SaveChanges();
-        }
 
         [HttpPut("WithdrawFromDepositAccount")]
         public IActionResult WithdrawFromDepositAccount(string accountFrom, string accountTo, 
