@@ -1,9 +1,9 @@
-﻿using BankApp.Domain;
+﻿using BankApp.Api.Services;
 using BankApp.Models;
 
 namespace BankApp.Api
 {
-    public class Converter : IConverter
+    public class Converter : IConverterService
     {
         private readonly BankDbContext _dbContext;
         public Converter(BankDbContext dbContext)
@@ -21,21 +21,21 @@ namespace BankApp.Api
                 throw new InvalidOperationException("Insufficient funds in the credit account");
             }
 
-            switch (credit.Currency)
+            switch (credit.Currency.Name)
             {
-                case "GEL" when debit.Currency == "GEL":
+                case "GEL" when debit.Currency.Name == "GEL":
                     credit.Balance -= amount;
                     debit.Balance += amount;
                     break;
-                case "USD" when debit.Currency == "USD":
+                case "USD" when debit.Currency.Name == "USD":
                     credit.Balance -= amount;
                     debit.Balance += amount;
                     break;
-                case "GEL" when debit.Currency == "USD":
+                case "GEL" when debit.Currency.Name == "USD":
                     credit.Balance -= amount;
                     debit.Balance += amount / 3;
                     break;
-                case "USD" when debit.Currency == "GEL":
+                case "USD" when debit.Currency.Name == "GEL":
                     credit.Balance -= amount;
                     debit.Balance += amount * 3;
                     break;

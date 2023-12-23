@@ -15,13 +15,24 @@ namespace BankApp.Controllers
         }
 
         [HttpPost]
-        public IActionResult IssueLoan(decimal amount, string currency, int timeLimit, 
+        public IActionResult IssueLoan(decimal amount, string currencyAbbreviation, int timeLimit, 
                                         decimal rate, int paymentDay, string userId)
         {
-            var loan = new Loan
+            var currencyFromDb = _dbContext.Currencies
+                .Where(x=>x.Abbreviation==currencyAbbreviation)
+                .FirstOrDefault();
+
+            if (currencyFromDb == null || (currencyFromDb.Abbreviation != "GEL"
+                && currencyFromDb.Abbreviation != "USD" && currencyFromDb.Abbreviation != "EUR"))
+            {
+                return BadRequest("Invalid currency");
+            }
+                
+
+                var loan = new Loan
             {
                 Amount = amount,
-                Currency = currency,
+                Currency = currencyFromDb,
                 TimeLimit = timeLimit,
                 Rate = rate,
                 PaymentDay = paymentDay,

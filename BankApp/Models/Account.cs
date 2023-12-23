@@ -13,8 +13,10 @@ namespace BankApp.Models
         public DateTime? WithdrawDate { get; set; }
 
         [ForeignKey("UserId")]
-        public virtual  User User { get; set; } 
-
-        public string Currency { get; set; }
+        public virtual  User User { get; set; }
+        [ForeignKey("CurrencyId")]
+        public virtual Currency? Currency { get; set; }
+        public Guid CurrencyId { get; set; }
+        
     }
 }
