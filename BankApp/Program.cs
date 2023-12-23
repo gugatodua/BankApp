@@ -1,5 +1,5 @@
 using BankApp.Api;
-using BankApp.Domain;
+using BankApp.Api.Services;
 using BankApp.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿namespace BankApp.Domain
+﻿namespace BankApp.Api.Services
 {
     public interface IMoneySender
     {

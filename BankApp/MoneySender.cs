@@ -1,5 +1,5 @@
 ﻿using System.Security.Principal;
-using BankApp.Domain;
+using BankApp.Api.Services;
 using BankApp.Models;
 
 namespace BankApp.Api
@@ -73,7 +73,7 @@ namespace BankApp.Api
         public void DepositMoney(decimal amount, string iban, string currency)
         {
             var account = _dbContext.Accounts.Where(x => x.Iban == iban).FirstOrDefault();
-            var bankWallet = _dbContext.BankWallets.Where(x => x.Currency == currency).FirstOrDefault();
+            var bankWallet = _dbContext.BankWallets.Where(x => x.Currency.Name == currency).FirstOrDefault();
 
             if (account == null)
             {

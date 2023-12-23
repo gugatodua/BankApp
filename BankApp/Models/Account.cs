@@ -15,7 +15,7 @@ namespace BankApp.Models
         [ForeignKey("UserId")]
         public virtual  User User { get; set; }
         [ForeignKey("CurrencyId")]
-        public virtual Currency Currency { get; set; }
+        public virtual Currency? Currency { get; set; }
         public Guid CurrencyId { get; set; }
         
     }

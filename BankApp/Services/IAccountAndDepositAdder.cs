@@ -1,11 +1,14 @@
-﻿namespace BankApp.Domain
+﻿using BankApp.Models;
+
+namespace BankApp.Api.Services
+
 {
-    public  interface IAccountAndDepositAdder
+    public interface IAccountAndDepositAdder
     {
         void AddAccountRecord(
            string userId,
            string iban,
-           string currency,
+           Currency currency,
            bool isDeposit = false,
            DateTime? withdrawDate = null);
     }

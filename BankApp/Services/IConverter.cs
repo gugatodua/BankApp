@@ -1,6 +1,6 @@
-﻿namespace BankApp.Domain
+﻿namespace BankApp.Api.Services
 {
-    public interface IConverter
+    public interface IConverterService
     {
         void Convert(string accountFrom, string accountTo, decimal amount);
     }

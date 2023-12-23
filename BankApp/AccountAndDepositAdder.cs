@@ -1,5 +1,6 @@
-﻿using BankApp.Domain;
+﻿using BankApp.Api.Services;
 using BankApp.Models;
+
 
 namespace BankApp.Api
 {
@@ -14,7 +15,7 @@ namespace BankApp.Api
         public void AddAccountRecord(
            string userId,
            string iban,
-           string currency,
+           Currency currency,
            bool isDeposit = false,
            DateTime? withdrawDate = null)
         {
